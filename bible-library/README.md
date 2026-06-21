@@ -20,6 +20,9 @@ checked.
 - Browse any passage by book, chapter, and verse range (e.g. `Genesis 1:1-9`)
 - Free-text search within a translation
 - Switch between translations to compare readings
+- Tap any tagged word in a Strong's-numbered translation (KJV, ASV,
+  Reina-Valera 1909, and both CUV editions) to see its underlying Hebrew or
+  Greek definition
 - A full catalog view of every translation in the project, including ones
   still pending license review
 

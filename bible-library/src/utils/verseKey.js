@@ -6,10 +6,12 @@ export function verseKey(translationId, book, chapter, verse) {
 }
 
 // name -> { bg, label } used by the highlight color picker and rendering.
+// Muted/translucent so verse text (cream on near-black) stays readable
+// when a highlight color sits behind it.
 export const HIGHLIGHT_COLORS = {
-  yellow: { bg: '#F6E58D', label: 'Yellow' },
-  green: { bg: '#C9E4B0', label: 'Green' },
-  blue: { bg: '#BFD7EA', label: 'Blue' },
-  pink: { bg: '#F2C6D6', label: 'Pink' },
-  purple: { bg: '#D9C6EE', label: 'Purple' },
+  yellow: { bg: 'rgba(201, 168, 76, 0.28)', label: 'Yellow' },
+  green: { bg: 'rgba(143, 174, 120, 0.28)', label: 'Green' },
+  blue: { bg: 'rgba(122, 162, 196, 0.28)', label: 'Blue' },
+  pink: { bg: 'rgba(196, 122, 152, 0.28)', label: 'Pink' },
+  purple: { bg: 'rgba(160, 122, 196, 0.28)', label: 'Purple' },
 }

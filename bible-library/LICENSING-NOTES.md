@@ -166,6 +166,18 @@ Baru, Javanese, Kannada KJV, Uwspółcześniona Biblia Gdańska (Polish), both
 Almeida editions (Portuguese), Somali (SIM), Tajik, Thai KJV, Urdu Geo, and
 both Wolof translations.
 
+## Strong's dictionary (`src/data/strongs.json`)
+
+Added alongside the Strong's-popup reading feature. Converted by
+`scripts/convert_strongs.py` from `Extras/strongs_definitions.json` in the
+same Bible SuperSearch-style export the translation catalog came from —
+**this file's own license has not yet been individually verified** the way
+each translation above was. Strong's Exhaustive Concordance itself dates to
+1890 and is long public domain, but confirm the *specific digital
+compilation* in that Extras file before relying on this the way the rest of
+the catalog has been vetted (same caution as anywhere else in this doc:
+bundle-level licensing isn't a substitute for checking the specific file).
+
 ## General rules of thumb (not a substitute for checking each one)
 
 - Anything translated and first published **before 1929** is very likely

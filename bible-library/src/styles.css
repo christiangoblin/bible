@@ -1,24 +1,27 @@
-:root {
-  /* Color tokens */
-  --color-parchment: #FAF6EE;
-  --color-parchment-deep: #F1EADA;
-  --color-ink: #1F2430;
-  --color-ink-soft: #4A4F5C;
-  --color-rule: #D8D2C4;
-  --color-rule-strong: #BBB29C;
-  --color-burgundy: #8C3B3B;
-  --color-burgundy-deep: #6E2C2C;
-  --color-sage: #6B7A5E;
-  --color-sage-bg: #E8ECE3;
-  --color-amber: #B8843A;
-  --color-amber-bg: #F3E7D2;
-  --color-slate: #5C6470;
-  --color-slate-bg: #E7E5DF;
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Crimson+Text:ital,wght@0,400;0,600;1,400&family=Inter:wght@400;500&display=swap');
 
-  /* Type tokens */
-  --font-display: 'Iowan Old Style', 'Palatino Linotype', Georgia, 'Times New Roman', serif;
-  --font-body: 'Iowan Old Style', Georgia, 'Times New Roman', serif;
-  --font-ui: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+:root {
+  /* Color tokens — dark/gold theme matching christiangoblin.com's main.css */
+  --color-parchment: #080808;
+  --color-parchment-deep: #111111;
+  --color-parchment-raised: #181818;
+  --color-ink: #f0ede6;
+  --color-ink-soft: #8a8070;
+  --color-rule: rgba(201, 168, 76, 0.18);
+  --color-rule-strong: rgba(201, 168, 76, 0.45);
+  --color-burgundy: #c9a84c;
+  --color-burgundy-deep: #e0c16d;
+  --color-sage: #8fae78;
+  --color-sage-bg: rgba(143, 174, 120, 0.12);
+  --color-amber: #d9a44c;
+  --color-amber-bg: rgba(217, 164, 76, 0.12);
+  --color-slate: #9aa0ab;
+  --color-slate-bg: rgba(154, 160, 171, 0.1);
+
+  /* Type tokens — matching main.css's font families */
+  --font-display: 'Cinzel', 'Palatino Linotype', Georgia, 'Times New Roman', serif;
+  --font-body: 'Crimson Text', Georgia, 'Times New Roman', serif;
+  --font-ui: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
   --font-utility: 'SF Mono', 'Courier New', monospace;
 
   --radius-sm: 3px;
@@ -170,7 +173,7 @@ button {
   font-size: 14px;
   border: 1px solid var(--color-rule-strong);
   border-radius: var(--radius-sm);
-  background: var(--color-parchment);
+  background: var(--color-parchment-raised);
   color: var(--color-ink);
 }
 .search-box:focus {
@@ -190,7 +193,7 @@ button {
   font-size: 13px;
   border: 1px solid var(--color-rule-strong);
   border-radius: var(--radius-sm);
-  background: var(--color-parchment);
+  background: var(--color-parchment-raised);
   color: var(--color-ink);
 }
 
@@ -229,7 +232,7 @@ select.picker {
   font-size: 13px;
   border: 1px solid var(--color-rule-strong);
   border-radius: var(--radius-sm);
-  background: var(--color-parchment);
+  background: var(--color-parchment-raised);
   color: var(--color-ink);
 }
 
@@ -244,7 +247,7 @@ select.picker {
   border: 1px solid var(--color-rule);
   border-radius: var(--radius-md);
   padding: 4px;
-  background: var(--color-parchment);
+  background: var(--color-parchment-raised);
 }
 
 .translation-tab {
@@ -498,7 +501,7 @@ select.picker {
   font-family: var(--font-ui);
   font-size: 13px;
   line-height: 1;
-  background: var(--color-parchment);
+  background: var(--color-parchment-raised);
   border: 1px solid var(--color-rule-strong);
   border-radius: var(--radius-sm);
   color: var(--color-ink-soft);
@@ -529,10 +532,10 @@ select.picker {
   gap: 4px;
   padding: 6px;
   margin-top: 4px;
-  background: var(--color-parchment);
+  background: var(--color-parchment-deep);
   border: 1px solid var(--color-rule-strong);
   border-radius: var(--radius-md);
-  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.12);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(201, 168, 76, 0.08);
 }
 
 .highlight-swatch {
@@ -544,7 +547,7 @@ select.picker {
 }
 
 .highlight-clear {
-  background: var(--color-parchment);
+  background: var(--color-parchment-raised);
   font-size: 10px;
   color: var(--color-ink-soft);
   display: flex;
@@ -561,7 +564,7 @@ select.picker {
 }
 
 .font-size-btn {
-  background: var(--color-parchment);
+  background: var(--color-parchment-raised);
   border: 1px solid var(--color-rule-strong);
   border-radius: var(--radius-sm);
   font-family: var(--font-ui);
@@ -718,7 +721,7 @@ select.picker {
 }
 
 .history-item {
-  background: var(--color-parchment);
+  background: var(--color-parchment-raised);
   border: 1px solid var(--color-rule);
   border-radius: 100px;
   font-family: var(--font-ui);
@@ -761,4 +764,111 @@ select.picker {
 
 .compare-grid .verse-block {
   margin-top: 4px;
+}
+
+/* ===================== Strong's popup ===================== */
+
+.strongs-word {
+  cursor: pointer;
+  border-bottom: 1px dotted var(--color-burgundy);
+  text-decoration: none;
+}
+
+.strongs-word:hover {
+  background: var(--color-amber-bg);
+}
+
+.strongs-popup {
+  position: absolute;
+  z-index: 100;
+  max-width: 320px;
+  background: var(--color-parchment-deep);
+  border: 1px solid var(--color-rule-strong);
+  border-radius: var(--radius-md);
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(201, 168, 76, 0.1);
+  padding: 14px 16px;
+  font-family: var(--font-ui);
+  font-size: 13px;
+  line-height: 1.55;
+  color: var(--color-ink);
+}
+
+.strongs-popup-close {
+  position: absolute;
+  top: 6px;
+  right: 8px;
+  background: none;
+  border: none;
+  font-size: 18px;
+  line-height: 1;
+  color: var(--color-ink-soft);
+  cursor: pointer;
+  padding: 2px 4px;
+}
+
+.strongs-popup-close:hover {
+  color: var(--color-ink);
+}
+
+.strongs-popup-word {
+  font-family: var(--font-display);
+  font-size: 15px;
+  font-weight: 700;
+  margin-bottom: 8px;
+  padding-right: 18px;
+}
+
+.strongs-entry-divider {
+  border: none;
+  border-top: 1px solid var(--color-rule);
+  margin: 10px 0;
+}
+
+.strongs-entry-header {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.strongs-entry-number {
+  font-family: var(--font-utility);
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--color-burgundy);
+}
+
+.strongs-entry-root {
+  font-family: var(--font-display);
+  font-size: 16px;
+}
+
+.strongs-entry-translit {
+  font-style: italic;
+  color: var(--color-ink-soft);
+  margin-top: 2px;
+}
+
+.strongs-entry-pron {
+  font-style: normal;
+}
+
+.strongs-entry-definition {
+  margin-top: 6px;
+}
+
+.strongs-entry-definition i {
+  font-style: italic;
+}
+
+.strongs-entry-title {
+  font-weight: 700;
+  margin-top: 4px;
+}
+
+.strongs-grammar-row {
+  display: flex;
+  gap: 14px;
+  margin-top: 2px;
+  flex-wrap: wrap;
 }

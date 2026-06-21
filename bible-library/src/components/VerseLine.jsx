@@ -1,5 +1,40 @@
 import React, { useState, useRef, useEffect } from 'react'
 import { HIGHLIGHT_COLORS } from '../utils/verseKey.js'
+import { parseStrongsText } from '../utils/strongs.js'
+
+function StrongsWord({ text, tags, onOpen }) {
+  const handleClick = (e) => {
+    const rect = e.currentTarget.getBoundingClientRect()
+    onOpen({
+      word: text,
+      tags,
+      position: { top: rect.bottom + window.scrollY + 6, left: rect.left + window.scrollX },
+    })
+  }
+  return (
+    <span className="strongs-word" onClick={handleClick}>
+      {text}
+    </span>
+  )
+}
+
+function VerseText({ text, hasStrongs, onWordClick }) {
+  if (!hasStrongs) return <>{text}</>
+  const segments = parseStrongsText(text)
+  return (
+    <>
+      {segments.map((seg, i) =>
+        seg.type === 'text' ? (
+          <React.Fragment key={i}>{seg.content}</React.Fragment>
+        ) : seg.tags.length === 0 ? (
+          <React.Fragment key={i}>{seg.text}</React.Fragment>
+        ) : (
+          <StrongsWord key={i} text={seg.text} tags={seg.tags} onOpen={onWordClick} />
+        )
+      )}
+    </>
+  )
+}
 
 export default function VerseLine({
   book,
@@ -13,6 +48,8 @@ export default function VerseLine({
   highlightColor,
   onToggleBookmark,
   onSetHighlight,
+  hasStrongs,
+  onWordClick,
 }) {
   const [menuOpen, setMenuOpen] = useState(false)
   const [copied, setCopied] = useState(false)
@@ -30,7 +67,8 @@ export default function VerseLine({
   }, [menuOpen])
 
   const handleCopy = async () => {
-    const quote = `"${text}" — ${book} ${chapter}:${verse}`
+    const cleanText = hasStrongs ? text.replace(/\{[^}]+\}/g, '') : text
+    const quote = `"${cleanText}" — ${book} ${chapter}:${verse}`
     try {
       await navigator.clipboard.writeText(quote)
       setCopied(true)
@@ -51,7 +89,9 @@ export default function VerseLine({
     <span className="verse-line" ref={rootRef}>
       <p className="verse" style={wrapStyle}>
         <span className="verse-num">{verse}</span>
-        <span style={verseStyle}>{text}</span>
+        <span style={verseStyle}>
+          <VerseText text={text} hasStrongs={hasStrongs} onWordClick={onWordClick} />
+        </span>
         <span className="verse-toolbar">
           <button
             type="button"

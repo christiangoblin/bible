@@ -2,7 +2,7 @@ import React from 'react'
 
 const MIN_SIZE = 14
 const MAX_SIZE = 28
-const DEFAULT_RED = '#8C3B3B'
+const DEFAULT_RED = '#D94F4F'
 
 export default function ReaderSettingsControl({ settings, onChange }) {
   const { fontSize, redLetterEnabled, redLetterColor } = settings

@@ -17,7 +17,24 @@ import ReaderSettingsControl from './components/ReaderSettingsControl.jsx'
 import DailyVerse from './components/DailyVerse.jsx'
 import BookmarksPanel from './components/BookmarksPanel.jsx'
 
-const openTranslations = translations.filter((t) => t.status === STATUS.OPEN)
+function sortByLanguageThenName(list) {
+  return [...list].sort((a, b) => {
+    const langCmp = a.language.localeCompare(b.language)
+    if (langCmp !== 0) return langCmp
+    return a.name.localeCompare(b.name)
+  })
+}
+
+// Display order everywhere in the UI: alphabetical by language, then name.
+const sortedTranslations = sortByLanguageThenName(translations)
+const openTranslations = sortedTranslations.filter((t) => t.status === STATUS.OPEN)
+const strongsTranslations = sortedTranslations.filter((t) => t.hasStrongs)
+
+// First-time default (no saved reading position yet): the (non-Strong's)
+// English KJV if present, else just the first open translation in the
+// sorted list.
+const defaultTranslation =
+  openTranslations.find((t) => t.id === 'kjv') || openTranslations[0] || null
 
 const DEFAULT_SETTINGS = {
   fontSize: 19,
@@ -40,12 +57,12 @@ export default function App() {
   )
 
   // ---- view / navigation state -------------------------------------------
-  const [view, setView] = useState('read') // 'read' | 'catalog' | 'bookmarks'
+  const [view, setView] = useState('read') // 'read' | 'catalog' | 'strongs' | 'bookmarks'
   const [activeId, setActiveId] = useState(
-    lastPosition?.translationId ?? openTranslations[0]?.id ?? null
+    lastPosition?.translationId ?? defaultTranslation?.id ?? null
   )
-  const [book, setBook] = useState(lastPosition?.book ?? 'John')
-  const [chapter, setChapter] = useState(lastPosition?.chapter ?? 3)
+  const [book, setBook] = useState(lastPosition?.book ?? 'Genesis')
+  const [chapter, setChapter] = useState(lastPosition?.chapter ?? 1)
   const [verseRangeInput, setVerseRangeInput] = useState('')
   const [refInput, setRefInput] = useState('')
   const [searchInput, setSearchInput] = useState('')
@@ -270,6 +287,9 @@ export default function App() {
           <button className={view === 'catalog' ? 'active' : ''} onClick={() => setView('catalog')}>
             All translations ({translations.length})
           </button>
+          <button className={view === 'strongs' ? 'active' : ''} onClick={() => setView('strongs')}>
+            Strong's translations ({strongsTranslations.length})
+          </button>
         </nav>
 
         <div className="sidebar-section">
@@ -323,7 +343,7 @@ export default function App() {
         <div className="sidebar-section">
           <span className="sidebar-label">Translation</span>
           <TranslationSwitcher
-            translations={translations}
+            translations={sortedTranslations}
             activeId={activeId}
             onSelect={(id) => {
               setActiveId(id)
@@ -344,7 +364,7 @@ export default function App() {
             onChange={(e) => setCompareId(e.target.value)}
           >
             <option value="">— None —</option>
-            {translations
+            {sortedTranslations
               .filter((t) => t.id !== activeId)
               .map((t) => (
                 <option key={t.id} value={t.id}>
@@ -383,7 +403,20 @@ export default function App() {
 
       <main className={`main-pane${compareTranslation ? ' main-pane-wide' : ''}`}>
         {view === 'catalog' ? (
-          <CatalogPage translations={translations} onRead={handleSelectFromCatalog} />
+          <CatalogPage translations={sortedTranslations} onRead={handleSelectFromCatalog} />
+        ) : view === 'strongs' ? (
+          <CatalogPage
+            translations={strongsTranslations}
+            onRead={handleSelectFromCatalog}
+            title="Strong's translations"
+            description={
+              <>
+                {strongsTranslations.length} translations include Strong's numbers, so you
+                can tap any tagged word while reading to see its underlying Hebrew or Greek
+                definition. They're also listed in the full translation list above.
+              </>
+            }
+          />
         ) : view === 'bookmarks' ? (
           <BookmarksPanel
             bookmarks={bookmarks}

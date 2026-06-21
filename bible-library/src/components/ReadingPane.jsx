@@ -1,8 +1,10 @@
-import React from 'react'
+import React, { useState, useEffect, useCallback } from 'react'
 import { STATUS } from '../data/catalog.js'
 import { isJesusVerse } from '../utils/jesusVerses.js'
 import { verseKey } from '../utils/verseKey.js'
+import { loadStrongsDictionary, tagNumber } from '../utils/strongs.js'
 import VerseLine from './VerseLine.jsx'
+import StrongsPopup from './StrongsPopup.jsx'
 
 const pillClass = {
   [STATUS.OPEN]: 'open',
@@ -56,10 +58,12 @@ function VerseColumn({
   highlights,
   onToggleBookmark,
   onSetHighlight,
+  onWordClick,
 }) {
   if (translation.status !== STATUS.OPEN) {
     return <LicenseNote translation={translation} />
   }
+  const hasStrongs = !!translation.hasStrongs
   return (
     <div className="verse-block" style={{ fontSize: settings.fontSize }}>
       {loading && <p>Loading…</p>}
@@ -87,6 +91,8 @@ function VerseColumn({
               highlightColor={highlights[key]}
               onToggleBookmark={() => onToggleBookmark(translation, v)}
               onSetHighlight={(color) => onSetHighlight(key, color)}
+              hasStrongs={hasStrongs}
+              onWordClick={hasStrongs ? onWordClick : undefined}
             />
           )
         })}
@@ -108,6 +114,31 @@ export default function ReadingPane({
   compareVerses,
   compareLoading,
 }) {
+  const [strongsDict, setStrongsDict] = useState(null)
+  const [popup, setPopup] = useState(null) // { word, tags, position }
+
+  const hasStrongs = !!translation?.hasStrongs || !!compareTranslation?.hasStrongs
+
+  useEffect(() => {
+    setPopup(null)
+    if (hasStrongs) {
+      loadStrongsDictionary().then(setStrongsDict)
+    }
+  }, [hasStrongs, translation?.id, compareTranslation?.id])
+
+  const openPopup = useCallback(({ word, tags, position }) => {
+    setPopup({ word, tags, position })
+  }, [])
+
+  const closePopup = useCallback(() => setPopup(null), [])
+
+  const popupEntries = popup
+    ? popup.tags.map((tag) => {
+        const num = tagNumber(tag)
+        return { number: num, entry: strongsDict ? strongsDict[num] || null : null }
+      })
+    : []
+
   if (!translation) {
     return (
       <div className="empty-state">
@@ -157,6 +188,7 @@ export default function ReadingPane({
               highlights={highlights}
               onToggleBookmark={onToggleBookmark}
               onSetHighlight={onSetHighlight}
+              onWordClick={openPopup}
             />
           </div>
           <div>
@@ -170,6 +202,7 @@ export default function ReadingPane({
               highlights={highlights}
               onToggleBookmark={onToggleBookmark}
               onSetHighlight={onSetHighlight}
+              onWordClick={openPopup}
             />
           </div>
         </div>
@@ -183,6 +216,16 @@ export default function ReadingPane({
           highlights={highlights}
           onToggleBookmark={onToggleBookmark}
           onSetHighlight={onSetHighlight}
+          onWordClick={openPopup}
+        />
+      )}
+
+      {popup && (
+        <StrongsPopup
+          word={popup.word}
+          entries={popupEntries}
+          position={popup.position}
+          onClose={closePopup}
         />
       )}
     </div>
