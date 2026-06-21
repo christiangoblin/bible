@@ -110,6 +110,10 @@ button {
   max-width: 760px;
 }
 
+.main-pane-wide {
+  max-width: 1180px;
+}
+
 @media (max-width: 800px) {
   .main-pane {
     padding: 20px;
@@ -459,109 +463,302 @@ select.picker {
   border-bottom-color: var(--color-burgundy);
 }
 
-/* ===================== Strong's popup ===================== */
+/* ===================== Verse line / toolbar / highlights ===================== */
 
-.strongs-word {
-  cursor: pointer;
-  border-bottom: 1px dotted var(--color-burgundy);
-  text-decoration: none;
+.verse-line {
+  display: block;
 }
 
-.strongs-word:hover {
-  background: var(--color-amber-bg);
+.verse {
+  position: relative;
+  border-radius: var(--radius-sm);
+  padding: 1px 4px;
+  margin-left: -4px;
 }
 
-.strongs-popup {
+.verse:hover {
+  background: var(--color-parchment-deep);
+}
+
+.verse-toolbar {
+  display: inline-flex;
+  gap: 2px;
+  margin-left: 6px;
+  vertical-align: middle;
+  opacity: 0;
+  transition: opacity 0.1s ease;
+}
+
+.verse:hover .verse-toolbar,
+.verse:focus-within .verse-toolbar {
+  opacity: 1;
+}
+
+.verse-btn {
+  font-family: var(--font-ui);
+  font-size: 13px;
+  line-height: 1;
+  background: var(--color-parchment);
+  border: 1px solid var(--color-rule-strong);
+  border-radius: var(--radius-sm);
+  color: var(--color-ink-soft);
+  padding: 3px 6px;
+}
+
+.verse-btn:hover {
+  color: var(--color-ink);
+  border-color: var(--color-burgundy);
+}
+
+.verse-btn.active {
+  color: var(--color-burgundy);
+  border-color: var(--color-burgundy);
+}
+
+.verse-highlight-wrap {
+  position: relative;
+  display: inline-block;
+}
+
+.highlight-menu {
   position: absolute;
-  z-index: 100;
-  max-width: 320px;
+  top: 100%;
+  left: 0;
+  z-index: 10;
+  display: flex;
+  gap: 4px;
+  padding: 6px;
+  margin-top: 4px;
   background: var(--color-parchment);
   border: 1px solid var(--color-rule-strong);
   border-radius: var(--radius-md);
-  box-shadow: 0 6px 24px rgba(31, 36, 48, 0.18);
-  padding: 14px 16px;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.12);
+}
+
+.highlight-swatch {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  border: 1px solid var(--color-rule-strong);
+  padding: 0;
+}
+
+.highlight-clear {
+  background: var(--color-parchment);
+  font-size: 10px;
+  color: var(--color-ink-soft);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* ===================== Reader settings (font size / red letter) ===================== */
+
+.font-size-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.font-size-btn {
+  background: var(--color-parchment);
+  border: 1px solid var(--color-rule-strong);
+  border-radius: var(--radius-sm);
   font-family: var(--font-ui);
   font-size: 13px;
-  line-height: 1.55;
+  font-weight: 700;
   color: var(--color-ink);
+  padding: 6px 10px;
 }
 
-.strongs-popup-close {
-  position: absolute;
-  top: 6px;
-  right: 8px;
+.font-size-btn:hover {
+  border-color: var(--color-burgundy);
+}
+
+.font-size-value {
+  font-family: var(--font-ui);
+  font-size: 12px;
+  color: var(--color-ink-soft);
+  min-width: 36px;
+  text-align: center;
+}
+
+.red-letter-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 14px;
+  font-family: var(--font-ui);
+  font-size: 13px;
+  color: var(--color-ink);
+  cursor: pointer;
+}
+
+.red-letter-color-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 8px;
+  margin-left: 24px;
+}
+
+.red-letter-color-row input[type='color'] {
+  width: 32px;
+  height: 24px;
+  padding: 0;
+  border: 1px solid var(--color-rule-strong);
+  border-radius: var(--radius-sm);
+  background: none;
+  cursor: pointer;
+}
+
+.reset-color-btn {
   background: none;
   border: none;
-  font-size: 18px;
-  line-height: 1;
+  font-family: var(--font-ui);
+  font-size: 11px;
   color: var(--color-ink-soft);
-  cursor: pointer;
-  padding: 2px 4px;
+  text-decoration: underline;
+  padding: 0;
 }
 
-.strongs-popup-close:hover {
-  color: var(--color-ink);
+/* ===================== Daily verse ===================== */
+
+.daily-verse {
+  background: var(--color-amber-bg);
+  border: 1px solid var(--color-amber);
+  border-radius: var(--radius-md);
+  padding: 18px 20px;
+  margin-bottom: 24px;
 }
 
-.strongs-popup-word {
-  font-family: var(--font-display);
-  font-size: 15px;
+.daily-verse-label {
+  font-family: var(--font-ui);
+  font-size: 10px;
   font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-amber);
   margin-bottom: 8px;
-  padding-right: 18px;
 }
 
-.strongs-entry-divider {
-  border: none;
-  border-top: 1px solid var(--color-rule);
-  margin: 10px 0;
+.daily-verse-text {
+  font-family: var(--font-body);
+  font-size: 17px;
+  line-height: 1.6;
+  color: var(--color-ink);
+  margin: 0 0 12px;
 }
 
-.strongs-entry-header {
+.daily-verse-ref {
+  font-family: var(--font-ui);
+  font-size: 13px;
+  color: var(--color-ink-soft);
+}
+
+.daily-verse-actions {
   display: flex;
-  align-items: baseline;
-  gap: 8px;
-  flex-wrap: wrap;
+  align-items: center;
+  gap: 14px;
 }
 
-.strongs-entry-number {
-  font-family: var(--font-utility);
+.daily-verse-dismiss {
+  background: none;
+  border: none;
+  font-family: var(--font-ui);
   font-size: 12px;
-  font-weight: 700;
+  color: var(--color-ink-soft);
+  text-decoration: underline;
+}
+
+.daily-verse-meta {
+  margin-top: 10px;
+  font-family: var(--font-ui);
+  font-size: 11px;
+  color: var(--color-ink-soft);
+}
+
+/* ===================== Bookmarks panel ===================== */
+
+.bookmark-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  border-bottom: 1px solid var(--color-rule);
+}
+
+.bookmark-item .search-result-item {
+  border-bottom: none;
+}
+
+.bookmark-translation {
+  text-transform: none;
+  font-weight: 400;
+  color: var(--color-ink-soft);
+}
+
+.bookmark-remove {
+  background: none;
+  border: none;
+  color: var(--color-ink-soft);
+  font-size: 14px;
+  padding: 14px 4px;
+}
+
+.bookmark-remove:hover {
   color: var(--color-burgundy);
 }
 
-.strongs-entry-root {
-  font-family: var(--font-display);
-  font-size: 16px;
-}
+/* ===================== Recently read (history) ===================== */
 
-.strongs-entry-translit {
-  font-style: italic;
-  color: var(--color-ink-soft);
-  margin-top: 2px;
-}
-
-.strongs-entry-pron {
-  font-style: normal;
-}
-
-.strongs-entry-definition {
-  margin-top: 6px;
-}
-
-.strongs-entry-definition i {
-  font-style: italic;
-}
-
-.strongs-entry-title {
-  font-weight: 700;
-  margin-top: 4px;
-}
-
-.strongs-grammar-row {
+.history-list {
   display: flex;
-  gap: 14px;
-  margin-top: 2px;
   flex-wrap: wrap;
+  gap: 6px;
+}
+
+.history-item {
+  background: var(--color-parchment);
+  border: 1px solid var(--color-rule);
+  border-radius: 100px;
+  font-family: var(--font-ui);
+  font-size: 12px;
+  color: var(--color-ink-soft);
+  padding: 5px 12px;
+}
+
+.history-item:hover {
+  border-color: var(--color-burgundy);
+  color: var(--color-ink);
+}
+
+/* ===================== Side-by-side compare ===================== */
+
+.compare-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 32px;
+  margin-top: 24px;
+}
+
+@media (max-width: 900px) {
+  .compare-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.compare-col-title {
+  font-family: var(--font-ui);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--color-ink-soft);
+  border-bottom: 1px solid var(--color-rule);
+  padding-bottom: 6px;
+  margin-bottom: 4px;
+}
+
+.compare-grid .verse-block {
+  margin-top: 4px;
 }

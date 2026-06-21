@@ -1,7 +1,8 @@
-import React, { useState, useEffect, useCallback } from 'react'
+import React from 'react'
 import { STATUS } from '../data/catalog.js'
-import { parseStrongsText, tagNumber, loadStrongsDictionary } from '../utils/strongs.js'
-import StrongsPopup from './StrongsPopup.jsx'
+import { isJesusVerse } from '../utils/jesusVerses.js'
+import { verseKey } from '../utils/verseKey.js'
+import VerseLine from './VerseLine.jsx'
 
 const pillClass = {
   [STATUS.OPEN]: 'open',
@@ -15,41 +16,98 @@ const pillLabel = {
   [STATUS.RESTRICTED]: 'Restricted — see source',
 }
 
-function StrongsWord({ text, tags, onOpen }) {
-  const handleClick = (e) => {
-    const rect = e.currentTarget.getBoundingClientRect()
-    onOpen({
-      word: text,
-      tags,
-      position: { top: rect.bottom + window.scrollY + 6, left: rect.left + window.scrollX },
-    })
+function LicenseNote({ translation }) {
+  if (translation.status === STATUS.PENDING) {
+    return (
+      <div className="empty-state" style={{ marginTop: 20 }}>
+        <strong>{translation.name}</strong> is in the catalog, but its license
+        hasn't been confirmed yet, so the text isn't available here. Once it's
+        verified as public domain or openly licensed, this page will show the
+        full text automatically.
+      </div>
+    )
+  }
+  if (translation.status === STATUS.RESTRICTED) {
+    return (
+      <div className="empty-state" style={{ marginTop: 20 }}>
+        <strong>{translation.name}</strong> is copyrighted: {translation.license}.
+        {translation.note && <> {translation.note}</>}
+        {translation.licenseUrl && (
+          <>
+            {' '}
+            <a href={translation.licenseUrl} target="_blank" rel="noreferrer">
+              View at the official source
+            </a>
+            .
+          </>
+        )}
+      </div>
+    )
+  }
+  return null
+}
+
+function VerseColumn({
+  translation,
+  verses,
+  loading,
+  settings,
+  bookmarkSet,
+  highlights,
+  onToggleBookmark,
+  onSetHighlight,
+}) {
+  if (translation.status !== STATUS.OPEN) {
+    return <LicenseNote translation={translation} />
   }
   return (
-    <span className="strongs-word" onClick={handleClick}>
-      {text}
-    </span>
+    <div className="verse-block" style={{ fontSize: settings.fontSize }}>
+      {loading && <p>Loading…</p>}
+      {!loading && verses.length === 0 && (
+        <div className="empty-state">
+          No text found for this reference in {translation.name}. Try a
+          different book or chapter — this translation's data file may not
+          include every passage yet.
+        </div>
+      )}
+      {!loading &&
+        verses.map((v) => {
+          const key = verseKey(translation.id, v.book, v.chapter, v.verse)
+          return (
+            <VerseLine
+              key={v.verse}
+              book={v.book}
+              chapter={v.chapter}
+              verse={v.verse}
+              text={v.text}
+              isJesus={isJesusVerse(v.book, v.chapter, v.verse)}
+              redLetterEnabled={settings.redLetterEnabled}
+              redLetterColor={settings.redLetterColor}
+              isBookmarked={bookmarkSet.has(key)}
+              highlightColor={highlights[key]}
+              onToggleBookmark={() => onToggleBookmark(translation, v)}
+              onSetHighlight={(color) => onSetHighlight(key, color)}
+            />
+          )
+        })}
+    </div>
   )
 }
 
-export default function ReadingPane({ translation, refLabel, verses, loading }) {
-  const [strongsDict, setStrongsDict] = useState(null)
-  const [popup, setPopup] = useState(null) // { word, tags, position }
-
-  const hasStrongs = !!translation?.hasStrongs
-
-  useEffect(() => {
-    setPopup(null)
-    if (hasStrongs) {
-      loadStrongsDictionary().then(setStrongsDict)
-    }
-  }, [hasStrongs, translation?.id])
-
-  const openPopup = useCallback(({ word, tags, position }) => {
-    setPopup({ word, tags, position })
-  }, [])
-
-  const closePopup = useCallback(() => setPopup(null), [])
-
+export default function ReadingPane({
+  translation,
+  refLabel,
+  verses,
+  loading,
+  settings,
+  bookmarkSet,
+  highlights,
+  onToggleBookmark,
+  onSetHighlight,
+  compareTranslation,
+  compareVerses,
+  compareLoading,
+}) {
   if (!translation) {
     return (
       <div className="empty-state">
@@ -58,100 +116,75 @@ export default function ReadingPane({ translation, refLabel, verses, loading }) 
     )
   }
 
-  const popupEntries = popup
-    ? popup.tags.map((tag) => {
-        const num = tagNumber(tag)
-        return { number: num, entry: strongsDict ? strongsDict[num] || null : null }
-      })
-    : []
+  // verses come in without book/chapter attached per-item from the parent's
+  // getVerses() helper, so stamp them on here for the bookmark/highlight keys.
+  const stamped = verses.map((v) => ({ ...v, book: refLabel.book, chapter: refLabel.chapter }))
+  const stampedCompare = compareVerses
+    ? compareVerses.map((v) => ({ ...v, book: refLabel.book, chapter: refLabel.chapter }))
+    : null
 
   return (
     <div>
       <div className="reading-header">
         <div>
-          <div className="reading-ref">{refLabel}</div>
-          <div className="reading-translation-name">{translation.name}</div>
+          <div className="reading-ref">{refLabel.text}</div>
+          <div className="reading-translation-name">
+            {translation.name}
+            {compareTranslation && <> &nbsp;vs.&nbsp; {compareTranslation.name}</>}
+          </div>
         </div>
       </div>
 
       <span className={`license-pill ${pillClass[translation.status]}`}>
         {pillLabel[translation.status]}
       </span>
-
-      {translation.status === STATUS.PENDING && (
-        <div className="empty-state" style={{ marginTop: 20 }}>
-          <strong>{translation.name}</strong> is in the catalog, but its license
-          hasn't been confirmed yet, so the text isn't available here. Once it's
-          verified as public domain or openly licensed, this page will show the
-          full text automatically.
-        </div>
+      {compareTranslation && (
+        <span className={`license-pill ${pillClass[compareTranslation.status]}`} style={{ marginLeft: 6 }}>
+          {compareTranslation.name}: {pillLabel[compareTranslation.status]}
+        </span>
       )}
 
-      {translation.status === STATUS.RESTRICTED && (
-        <div className="empty-state" style={{ marginTop: 20 }}>
-          <strong>{translation.name}</strong> is copyrighted: {translation.license}.
-          {translation.note && <> {translation.note}</>}
-          {translation.licenseUrl && (
-            <>
-              {' '}
-              <a href={translation.licenseUrl} target="_blank" rel="noreferrer">
-                View at the official source
-              </a>
-              .
-            </>
-          )}
+      {compareTranslation ? (
+        <div className="compare-grid">
+          <div>
+            <div className="compare-col-title">{translation.name}</div>
+            <VerseColumn
+              translation={translation}
+              verses={stamped}
+              loading={loading}
+              settings={settings}
+              bookmarkSet={bookmarkSet}
+              highlights={highlights}
+              onToggleBookmark={onToggleBookmark}
+              onSetHighlight={onSetHighlight}
+            />
+          </div>
+          <div>
+            <div className="compare-col-title">{compareTranslation.name}</div>
+            <VerseColumn
+              translation={compareTranslation}
+              verses={stampedCompare || []}
+              loading={compareLoading}
+              settings={settings}
+              bookmarkSet={bookmarkSet}
+              highlights={highlights}
+              onToggleBookmark={onToggleBookmark}
+              onSetHighlight={onSetHighlight}
+            />
+          </div>
         </div>
-      )}
-
-      {translation.status === STATUS.OPEN && (
-        <div className="verse-block">
-          {loading && <p>Loading…</p>}
-          {!loading && verses.length === 0 && (
-            <div className="empty-state">
-              No text found for this reference in {translation.name}. Try a
-              different book or chapter — this translation's data file may not
-              include every passage yet.
-            </div>
-          )}
-          {!loading &&
-            verses.map((v) => (
-              <p className="verse" key={v.verse}>
-                <span className="verse-num">{v.verse}</span>
-                {hasStrongs ? (
-                  <VerseTextWithPopup text={v.text} onOpen={openPopup} />
-                ) : (
-                  v.text
-                )}
-              </p>
-            ))}
-        </div>
-      )}
-
-      {popup && (
-        <StrongsPopup
-          word={popup.word}
-          entries={popupEntries}
-          position={popup.position}
-          onClose={closePopup}
+      ) : (
+        <VerseColumn
+          translation={translation}
+          verses={stamped}
+          loading={loading}
+          settings={settings}
+          bookmarkSet={bookmarkSet}
+          highlights={highlights}
+          onToggleBookmark={onToggleBookmark}
+          onSetHighlight={onSetHighlight}
         />
       )}
     </div>
-  )
-}
-
-function VerseTextWithPopup({ text, onOpen }) {
-  const segments = parseStrongsText(text)
-  return (
-    <>
-      {segments.map((seg, i) =>
-        seg.type === 'text' ? (
-          <React.Fragment key={i}>{seg.content}</React.Fragment>
-        ) : seg.tags.length === 0 ? (
-          <React.Fragment key={i}>{seg.text}</React.Fragment>
-        ) : (
-          <StrongsWord key={i} text={seg.text} tags={seg.tags} onOpen={onOpen} />
-        )
-      )}
-    </>
   )
 }
