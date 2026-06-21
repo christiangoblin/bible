@@ -445,8 +445,9 @@ select.picker {
 }
 
 .top-nav {
-  display: flex;
-  gap: 18px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px 14px;
   margin-bottom: 8px;
 }
 
@@ -457,8 +458,11 @@ select.picker {
   font-size: 13px;
   font-weight: 600;
   color: var(--color-ink-soft);
-  padding: 4px 0;
+  padding: 4px 0 6px;
   border-bottom: 2px solid transparent;
+  text-align: left;
+  white-space: normal;
+  line-height: 1.3;
 }
 
 .top-nav button.active {

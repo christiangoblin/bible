@@ -436,6 +436,7 @@ export default function App() {
               <DailyVerse
                 verse={dailyVerse}
                 translationName={activeTranslation?.name}
+                hasStrongs={!!activeTranslation?.hasStrongs}
                 onDismiss={handleDismissDailyVerse}
                 onOpen={handleOpenDailyVerse}
               />
