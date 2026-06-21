@@ -458,3 +458,110 @@ select.picker {
   color: var(--color-ink);
   border-bottom-color: var(--color-burgundy);
 }
+
+/* ===================== Strong's popup ===================== */
+
+.strongs-word {
+  cursor: pointer;
+  border-bottom: 1px dotted var(--color-burgundy);
+  text-decoration: none;
+}
+
+.strongs-word:hover {
+  background: var(--color-amber-bg);
+}
+
+.strongs-popup {
+  position: absolute;
+  z-index: 100;
+  max-width: 320px;
+  background: var(--color-parchment);
+  border: 1px solid var(--color-rule-strong);
+  border-radius: var(--radius-md);
+  box-shadow: 0 6px 24px rgba(31, 36, 48, 0.18);
+  padding: 14px 16px;
+  font-family: var(--font-ui);
+  font-size: 13px;
+  line-height: 1.55;
+  color: var(--color-ink);
+}
+
+.strongs-popup-close {
+  position: absolute;
+  top: 6px;
+  right: 8px;
+  background: none;
+  border: none;
+  font-size: 18px;
+  line-height: 1;
+  color: var(--color-ink-soft);
+  cursor: pointer;
+  padding: 2px 4px;
+}
+
+.strongs-popup-close:hover {
+  color: var(--color-ink);
+}
+
+.strongs-popup-word {
+  font-family: var(--font-display);
+  font-size: 15px;
+  font-weight: 700;
+  margin-bottom: 8px;
+  padding-right: 18px;
+}
+
+.strongs-entry-divider {
+  border: none;
+  border-top: 1px solid var(--color-rule);
+  margin: 10px 0;
+}
+
+.strongs-entry-header {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.strongs-entry-number {
+  font-family: var(--font-utility);
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--color-burgundy);
+}
+
+.strongs-entry-root {
+  font-family: var(--font-display);
+  font-size: 16px;
+}
+
+.strongs-entry-translit {
+  font-style: italic;
+  color: var(--color-ink-soft);
+  margin-top: 2px;
+}
+
+.strongs-entry-pron {
+  font-style: normal;
+}
+
+.strongs-entry-definition {
+  margin-top: 6px;
+}
+
+.strongs-entry-definition i {
+  font-style: italic;
+}
+
+.strongs-entry-title {
+  font-weight: 700;
+  margin-top: 4px;
+}
+
+.strongs-grammar-row {
+  display: flex;
+  gap: 14px;
+  margin-top: 2px;
+  flex-wrap: wrap;
+}
