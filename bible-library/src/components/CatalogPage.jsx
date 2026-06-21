@@ -7,7 +7,7 @@ const statusMeta = {
   [STATUS.RESTRICTED]: { label: 'Restricted', dotClass: 'restricted' },
 }
 
-export default function CatalogPage({ translations, onRead }) {
+export default function CatalogPage({ translations, onRead, title = 'All translations', description }) {
   const [filter, setFilter] = useState('all')
 
   const filtered = translations.filter((t) =>
@@ -21,12 +21,16 @@ export default function CatalogPage({ translations, onRead }) {
 
   return (
     <div>
-      <div className="reading-ref" style={{ marginBottom: 4 }}>All translations</div>
+      <div className="reading-ref" style={{ marginBottom: 4 }}>{title}</div>
       <p className="reading-translation-name" style={{ marginBottom: 16 }}>
-        {translations.length} translations in the catalog —{' '}
-        {counts[STATUS.OPEN] || 0} open and readable,{' '}
-        {counts[STATUS.PENDING] || 0} pending license review,{' '}
-        {counts[STATUS.RESTRICTED] || 0} restricted.
+        {description ?? (
+          <>
+            {translations.length} translations in the catalog —{' '}
+            {counts[STATUS.OPEN] || 0} open and readable,{' '}
+            {counts[STATUS.PENDING] || 0} pending license review,{' '}
+            {counts[STATUS.RESTRICTED] || 0} restricted.
+          </>
+        )}
       </p>
 
       <div className="top-nav">

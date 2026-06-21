@@ -10,13 +10,29 @@ import ReadingPane from './components/ReadingPane.jsx'
 import SearchResults from './components/SearchResults.jsx'
 import CatalogPage from './components/CatalogPage.jsx'
 
-const openTranslations = translations.filter((t) => t.status === STATUS.OPEN)
+function sortByLanguageThenName(list) {
+  return [...list].sort((a, b) => {
+    const langCmp = a.language.localeCompare(b.language)
+    if (langCmp !== 0) return langCmp
+    return a.name.localeCompare(b.name)
+  })
+}
+
+// Display order everywhere in the UI: alphabetical by language, then name.
+const sortedTranslations = sortByLanguageThenName(translations)
+const openTranslations = sortedTranslations.filter((t) => t.status === STATUS.OPEN)
+const strongsTranslations = sortedTranslations.filter((t) => t.hasStrongs)
+
+// Default to the (non-Strong's) English KJV if it's present, else just the
+// first open translation in the sorted list.
+const defaultTranslation =
+  openTranslations.find((t) => t.id === 'kjv') || openTranslations[0] || null
 
 export default function App() {
-  const [view, setView] = useState('read') // 'read' | 'catalog'
-  const [activeId, setActiveId] = useState(openTranslations[0]?.id ?? null)
-  const [book, setBook] = useState('John')
-  const [chapter, setChapter] = useState(3)
+  const [view, setView] = useState('read') // 'read' | 'catalog' | 'strongs'
+  const [activeId, setActiveId] = useState(defaultTranslation?.id ?? null)
+  const [book, setBook] = useState('Genesis')
+  const [chapter, setChapter] = useState(1)
   const [verseRangeInput, setVerseRangeInput] = useState('')
   const [refInput, setRefInput] = useState('')
   const [searchInput, setSearchInput] = useState('')
@@ -108,6 +124,9 @@ export default function App() {
           <button className={view === 'catalog' ? 'active' : ''} onClick={() => setView('catalog')}>
             All translations ({translations.length})
           </button>
+          <button className={view === 'strongs' ? 'active' : ''} onClick={() => setView('strongs')}>
+            Strong's translations ({strongsTranslations.length})
+          </button>
         </nav>
 
         <div className="sidebar-section">
@@ -161,7 +180,7 @@ export default function App() {
         <div className="sidebar-section">
           <span className="sidebar-label">Translation</span>
           <TranslationSwitcher
-            translations={translations}
+            translations={sortedTranslations}
             activeId={activeId}
             onSelect={(id) => {
               setActiveId(id)
@@ -173,7 +192,20 @@ export default function App() {
 
       <main className="main-pane">
         {view === 'catalog' ? (
-          <CatalogPage translations={translations} onRead={handleSelectFromCatalog} />
+          <CatalogPage translations={sortedTranslations} onRead={handleSelectFromCatalog} />
+        ) : view === 'strongs' ? (
+          <CatalogPage
+            translations={strongsTranslations}
+            onRead={handleSelectFromCatalog}
+            title="Strong's translations"
+            description={
+              <>
+                {strongsTranslations.length} translations include Strong's numbers, so you
+                can tap any tagged word while reading to see its underlying Hebrew or Greek
+                definition. They're also listed in the full translation list above.
+              </>
+            }
+          />
         ) : searchResults ? (
           <SearchResults
             results={searchResults}
